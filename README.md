@@ -29,6 +29,7 @@ src/inner_speech/
   ds006033/eeg.py                 # Simultaneous-study EEG pipeline
   ds006033/fmri.py                # Simultaneous-study fMRI pipeline
 notebooks/ds003626/               # Optional EEG analysis notebooks
+notebooks/ds006033/               # Optional EEG and fMRI examples
 tests/                            # Synthetic regression/scientific guards
 docs/analysis_plan.md
 docs/validation.md
