@@ -4,6 +4,16 @@ EEG preprocessing, run-held-out CSP classification, and exploratory task/rest co
 
 The original notebooks remain unchanged in their two historical folders. New shared code lives in `src/inner_speech`; new notebooks call that code instead of duplicating it. The group pipeline is implemented, but a validated group-level scientific finding is **not** claimed. See [validation status](docs/validation.md) and [analysis plan and limitations](docs/analysis_plan.md).
 
+
+## Datasets
+
+| OpenNeuro dataset | Recordings | Analysis in this repository |
+| --- | --- | --- |
+| [ds003626 v2.1.2](https://openneuro.org/datasets/ds003626/versions/2.1.2) | EEG from 10 participants performing inner speech, pronounced speech, and visualization tasks | EEG preprocessing, direction decoding, and exploratory EEG connectivity |
+| [ds006033 v1.0.0](https://openneuro.org/datasets/ds006033/versions/1.0.0) | Simultaneous EEG and fMRI from three participants performing an eight-word inner-speech task | [Separate EEG and fMRI workflow](docs/ds006033.md) for EEG decoding, EEG connectivity and multitaper power, and BOLD ROI connectivity with fMRIPrep and Nilearn |
+
+See the [dataset download and file layout guide](data/README.md).
+
 ## Layout
 
 ```text
@@ -30,7 +40,7 @@ data/README.md                    # Dataset preparation, no recordings
 results/generated/                # Ignored local outputs and provenance
 experiments/README.md             # Historical EEGNet attempt status
 EEG Inner Speech Decoding/        # Unmodified original snapshot
-Imagined Speech Decoding using Functional Connectivity/  # Original snapshot
+imagined-speech-fc/              # Original connectivity notebooks
 SOURCE_MANIFEST.json              # SHA-256 of 17 original source files
 ```
 
@@ -68,4 +78,3 @@ Open the five notebooks after installation. They use `configs/default.yaml` unle
 The 17 original top-level `.ipynb`, `.py` and `.m` files retain their exact bytes, saved outputs, empty files and variants. Data, external weights and checkpoints are excluded. Old notebooks contain obsolete paths, possible evaluation leakage and incomplete experiments. External EEGNet inference is excluded from the new execution path. No code license has been selected; dataset licensing does not assign a license to this source code.
 
 Primary sources: [data descriptor](https://doi.org/10.1038/s41597-022-01147-2), [authors' repository](https://github.com/N-Nieto/Inner_Speech_Dataset), [wPLI methods](https://doi.org/10.1016/j.neuroimage.2011.01.055), and [MNE-Connectivity](https://mne.tools/mne-connectivity/stable/generated/mne_connectivity.spectral_connectivity_epochs.html).
-
