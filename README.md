@@ -2,8 +2,7 @@
 
 EEG preprocessing, run-held-out CSP classification, and exploratory task/rest connectivity analysis for the [Inner Speech dataset, ds003626 v2.1.2](https://doi.org/10.18112/openneuro.ds003626.v2.1.2).
 
-The original notebooks remain unchanged in their two historical folders. New shared code lives in `src/inner_speech`; new notebooks call that code instead of duplicating it. The group pipeline is implemented, but a validated group-level scientific finding is **not** claimed. See [validation status](docs/validation.md) and [analysis plan and limitations](docs/analysis_plan.md).
-
+Both dataset workflows run as Python modules from the terminal. The optional ds003626 notebooks call the shared Python analysis functions. See [validation status](docs/validation.md) and [analysis limits](docs/analysis_plan.md) for ds003626.
 
 ## Datasets
 
@@ -26,22 +25,16 @@ src/inner_speech/
   connectivity.py                 # Matched task/rest wPLI-squared, coherence, PLV
   statistics.py                   # Participant differences, max-T, effect estimates
   time_frequency.py               # Multitaper TFR
-  cli.py                          # Staged execution
-notebooks/
-  01_preprocessing.ipynb
-  02_csp_classification.ipynb
-  03_coherence_analysis.ipynb
-  04_plv_analysis.ipynb
-  05_time_frequency.ipynb
+  ds003626/cli.py                 # Staged EEG pipeline
+  ds006033/eeg.py                 # Simultaneous-study EEG pipeline
+  ds006033/fmri.py                # Simultaneous-study fMRI pipeline
+notebooks/ds003626/               # Optional EEG analysis notebooks
 tests/                            # Synthetic regression/scientific guards
 docs/analysis_plan.md
 docs/validation.md
 data/README.md                    # Dataset preparation, no recordings
 results/generated/                # Ignored local outputs and provenance
 experiments/README.md             # Historical EEGNet attempt status
-EEG Inner Speech Decoding/        # Unmodified original snapshot
-imagined-speech-fc/              # Original connectivity notebooks
-SOURCE_MANIFEST.json              # SHA-256 of 17 original source files
 ```
 
 ## Install and configure
@@ -51,7 +44,7 @@ Python 3.11 is the tested interpreter. From the repository root:
 ```bash
 python -m venv .venv
 # Activate the virtual environment for your shell.
-python -m pip install -e ".[dev]"
+python -m pip install -e .
 ```
 
 Copy `configs/default.yaml` to `configs/local.yaml`. Set `dataset_root` to the separately downloaded dataset and `output_root` to a local results directory. Relative paths resolve against the YAML file. Set `preprocessing.scratch_dir` if the OS temporary drive has less than approximately 3 GiB free. Filtering/ICA also require substantial RAM and time. Review bad channels/ICA rather than assuming the starting settings suit every recording.
@@ -59,22 +52,21 @@ Copy `configs/default.yaml` to `configs/local.yaml`. Set `dataset_root` to the s
 ## Execute in stages
 
 ```bash
-python -m inner_speech.cli audit --config configs/local.yaml
+python -m inner_speech.ds003626.cli audit --config configs/local.yaml
 # Review condition counts, event sequences and eligible pairs in the audit CSVs.
-python -m inner_speech.cli preprocess --config configs/local.yaml
-python -m inner_speech.cli connectivity --config configs/local.yaml
-python -m inner_speech.cli classify --config configs/local.yaml
+python -m inner_speech.ds003626.cli preprocess --config configs/local.yaml
+python -m inner_speech.ds003626.cli connectivity --config configs/local.yaml
+python -m inner_speech.ds003626.cli classify --config configs/local.yaml
 # Only after all planned participants and sessions pass QC:
-python -m inner_speech.cli statistics --config configs/local.yaml
+python -m inner_speech.ds003626.cli statistics --config configs/local.yaml
+# Optional tests, after installing the dev extra
 python -m pytest -q
 ```
 
 For a first run, explicitly select `subjects: [sub-01]` and `sessions: [ses-01]` in the local config. This is an execution check, **not** a group analysis. Group inference requires at least five unique participants by default and fails if any planned session is missing. Use a different output directory for each changed configuration; generated files within a run directory are overwritten on rerun.
 
-Open the five notebooks after installation. They use `configs/default.yaml` unless environment variable `INNER_SPEECH_CONFIG` points to a local YAML. New notebooks contain no claimed results or saved executions.
+The five optional notebooks are in `notebooks/ds003626/`. They use `configs/default.yaml` unless environment variable `INNER_SPEECH_CONFIG` points to a local YAML. New notebooks contain no claimed results or saved executions.
 
-## Original archive
-
-The 17 original top-level `.ipynb`, `.py` and `.m` files retain their exact bytes, saved outputs, empty files and variants. Data, external weights and checkpoints are excluded. Old notebooks contain obsolete paths, possible evaluation leakage and incomplete experiments. External EEGNet inference is excluded from the new execution path. No code license has been selected; dataset licensing does not assign a license to this source code.
+## Sources
 
 Primary sources: [data descriptor](https://doi.org/10.1038/s41597-022-01147-2), [authors' repository](https://github.com/N-Nieto/Inner_Speech_Dataset), [wPLI methods](https://doi.org/10.1016/j.neuroimage.2011.01.055), and [MNE-Connectivity](https://mne.tools/mne-connectivity/stable/generated/mne_connectivity.spectral_connectivity_epochs.html).
